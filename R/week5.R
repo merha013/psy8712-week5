@@ -11,13 +11,13 @@ Bnotes_tbl <- read_tsv("../data/Bnotes.txt")
 # Data Cleaning
 Aclean_tbl <- Adata_tbl %>%
   separate(qs, into=paste0("q",1:5)) %>%
-  mutate(datadate = mdy_hms(datadate)) %>%
-  mutate(across(!c("casenum", "parnum", "stimver", "datadate"), as.integer)) %>%
+  mutate(datadate = mdy_hms(datadate), lab = "A") %>%
+  mutate(across(!c("casenum", "parnum", "stimver", "datadate", "lab"), as.integer)) %>%
   left_join(Anotes_tbl, by = "parnum") %>%
   filter(is.na(notes))
 ABclean_tbl <- Bdata_tbl %>%
-  mutate(datadate = mdy_hms(datadate)) %>%
-  mutate(across(!c("casenum", "parnum", "stimver", "datadate"), as.integer)) %>%
+  mutate(datadate = mdy_hms(datadate), lab = "B") %>%
+  mutate(across(!c("casenum", "parnum", "stimver", "datadate", "lab"), as.integer)) %>%
   left_join(Bnotes_tbl, by = "parnum") %>%
-  filter(is.na(notes))
-  # inner_join(Aclean_tbl)
+  filter(is.na(notes)) %>%
+  bind_rows(Aclean_tbl)
